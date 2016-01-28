@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.stpan.retrofitdemo.services.LoggingInterceptor;
 import com.stpan.retrofitdemo.services.RestService;
 
+import java.util.HashMap;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -13,6 +15,12 @@ import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.RxJavaCallAdapterFactory;
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,19 +42,25 @@ public class MainActivity extends AppCompatActivity {
                 .client(client)
                 .build();
         RestService service = retrofit.create(RestService.class);
-        Call<String> stringCall = service.getUser("123");
-        stringCall.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Response<String> response) {
-                String s = response.body();
-                System.out.println("result: "+s);
-            }
+        Observable<HashMap<String,String>> stringCall = service.getUser("stpan");
+        stringCall.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<HashMap<String,String>>() {
+                    @Override
+                    public void onCompleted() {
+                        System.out.println("hi");
+                    }
 
-            @Override
-            public void onFailure(Throwable throwable) {
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
 
-            }
-        });
+                    @Override
+                    public void onNext(HashMap<String,String> s) {
+                        System.out.println("hello： " + s.get("name"));
+                    }
+                });
 
     }
 
