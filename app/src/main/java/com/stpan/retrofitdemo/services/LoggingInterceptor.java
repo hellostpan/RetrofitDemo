@@ -13,7 +13,7 @@ import okhttp3.Response;
  * 版权: sowell,onegcloud
  */
 public class LoggingInterceptor implements Interceptor {
-    @Override public Response intercept(Interceptor.Chain chain) throws IOException {
+    @Override public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
         /*long t1 = System.nanoTime();

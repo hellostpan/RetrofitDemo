@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.stpan.retrofitdemo.activity.R;
 
+import okhttp3.OkHttpClient;
 import retrofit2.RxJavaCallAdapterFactory;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
@@ -16,16 +17,22 @@ public class RetrofitServices {
     private Context context;
 
     public RetrofitServices(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(context.getResources().getString(R.string.path))
-            .addConverterFactory(GsonConverterFactory.create())
-            //.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build();
+    private Retrofit getRetrofit(){
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new LoggingInterceptor())
+                .build();
+         return new Retrofit.Builder()
+                .baseUrl(context.getResources().getString(R.string.path))
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(client)
+                .build();
+    }
 
     public RestService getRestService(){
-       return retrofit.create(RestService.class);
+       return getRetrofit().create(RestService.class);
     }
 }
