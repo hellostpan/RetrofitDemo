@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">RetrofitDemo</string>
     <string name="action_settings">Settings</string>
-    <string name="path">http://192.168.1.147:8080/swzhsq_webservice/service/api/</string>
+    <string name="path">http://192.168.56.1:2345/spring_mvc_webservice/</string>
 </resources>
